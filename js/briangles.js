@@ -1,5 +1,5 @@
 function init(wi, hi, size) {
-	var m = [ 150, 120, 50, 180 ],
+	var m = [ 180, 40, 50, 120 ],
 		w = wi - m[1] - m[3], h = hi - m[0] - m[2];
 
 	var triW = w / size;
@@ -51,26 +51,48 @@ function init(wi, hi, size) {
 		d.dy = - Math.cos(d.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
 	})
 
-	var tri = svg
-			.selectAll(".triangle")
+	var tri = svg.selectAll('.base')
 			.data(nodes)
 			.enter()
+			.append('g')
+			.attr("class", 'base')
+			
+		svg.selectAll(".base")
 			.append("path")
-			.attr("class", "triangle")
-			.attr("d", d3.svg.symbol().type('triangle-up'))
+			.attr("class", function(d) { return "triangle color triangle-" + d.i + '-' + d.j })
+			.attr('stroke', 'red')
+			.attr('stroke-dasharray', function(d) { return (3 * wid / 5.55) })
+			
+		svg.selectAll(".base")
+			.append("path")
+			.attr("class", function(d) { return "triangle color triangle-" + d.i + '-' + d.j })
+			.attr('stroke', 'green')
+			.attr('stroke-dasharray', function(d) { return (2 * wid / 5.55) + ',' + (wid / 5.55) })
+			
+		svg.selectAll(".base")
+			.append("path")
+			.attr("class", function(d) { return "triangle color triangle-" + d.i + '-' + d.j })
+			.attr('stroke', 'blue')
+			.attr('stroke-dasharray', function(d) { return (wid / 5.55) + ',' + (2 * wid / 5.55) })
+			
+		svg.selectAll(".base")
+			.append("path")
+			.attr("class", function(d) { return "triangle none triangle-" + d.i + '-' + d.j })
+			.attr('stroke', 'white')
+			.attr('stroke-width', .5)
+			
+		svg.selectAll('.base')
 			.attr("transform", function(d) { return "translate(" + (d.x + d.dx) + "," + (d.y + d.dy) + ")rotate(" + d.r + ")scale(" + d.s + ")"; })
-			.style('fill', function(d) { return '#' + Math.floor(Math.random()*16777215).toString(16); })
-			.style('stroke', function(d) { return '#' + Math.floor(Math.random()*16777215).toString(16); })
-			.style('margin-bottom', 30)
-			// .attr("d", function(d) { var type = ('triangle-' + (d.j % 2 == 0 ? 'up' : 'down')); console.log(type); return d3.svg.symbol().type(type); })
-			.on('click', function(d) {
-				d.r += 120
-				d.dx = Math.sin(d.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
-				d.dy = - Math.cos(d.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
+			.on('click', function(e) {
+				e.r += 120
+				e.dx = Math.sin(e.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
+				e.dy = - Math.cos(e.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
 				d3.select(this).transition()
-			      .duration(750).attr('transform', 'translate(' + (d.x + d.dx) + ', ' + (d.y + d.dy) + ')rotate(' + d.r + ')scale(' + d.s + ')')
+			      .duration(750).attr('transform', 'translate(' + (e.x + e.dx) + ', ' + (e.y + e.dy) + ')rotate(' + e.r + ')scale(' + e.s + ')')
 			})
-
-	console.log(nodes)
-	console.log('Done')
+			
+		svg.selectAll('.triangle')
+			.attr("d", d3.svg.symbol().type('triangle-up'))
+		svg.selectAll('.none')
+			.style('fill', function(d) { return '#' + Math.floor(Math.random()*16777215).toString(16); })
 }
