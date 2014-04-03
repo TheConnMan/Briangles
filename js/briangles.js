@@ -124,7 +124,7 @@ function init(wi, hi, size) {
 		svg.selectAll('.triangle')
 			.attr("d", d3.svg.symbol().type('triangle-up'))
 		svg.selectAll('.none')
-			.style('fill', function(d) { if (!d.fixed) { return d3.rgb(d.color.r, d.color.g, d.color.b) } else { console.log(d.fixed); return d.fixed } })
+			.style('fill', function(d) { if (!d.fixed) { return d3.rgb(d.color.r, d.color.g, d.color.b) } else { return d.fixed } })
 
 		function disperseColor(d) {
 			colors.forEach(function(c) {
@@ -165,7 +165,7 @@ function init(wi, hi, size) {
 			moves++
 			var html = '<tr><td>' + moves + '</td>';
 			colors.forEach(function(c) {
-				var d = $.grep(nodes, function(e) { return e.fixedC = c })[0]
+				var d = $.grep(nodes, function(e) { return e.fixedC == c })[0]
 				html += '<td>' + d.color[c] + '</td>';
 			})
 			html += '</tr>';
