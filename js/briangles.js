@@ -10,6 +10,8 @@ function init(wi, hi, size) {
 			.attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
 	var nodes = [];
+	var colors = ['r', 'g', 'b'];
+	var moves = 0;
 
 	for (var i = 0; i < size; i++) {
 		nodes.push({
@@ -17,7 +19,7 @@ function init(wi, hi, size) {
 			j : i
 		})
 	}
-	for (var i = 1; i < size; i += 2) {
+	for (var i = 1; i < size * 2; i += 2) {
 		for (var j = 0; j < (size - (i / 2) - 1); j++) {
 			nodes.push({
 				i : i,
@@ -29,26 +31,48 @@ function init(wi, hi, size) {
 			})
 		}
 	}
-	nodes.push({
-		i : 2 * size - 3,
-		j : 0
-	})
-	nodes.push({
-		i : 2 * size - 2,
-		j : 0
-	})
 	
 	nodes.forEach(function(d) {
 		if (d.i % 2 == 0) {
 			d.r = 0
+			d.f = false
 		} else {
 			d.r = 180
+			d.f = true
+		}
+		d.c = {}
+		d.c.r = 30
+		if (Math.random() > 0.5) {
+			d.c.g = 150
+			d.c.b = 270
+		} else {
+			d.c.b = 150
+			d.c.g = 270
 		}
 		d.s = triW / 20
 		d.x = (d.i / 2 + d.j + (d.i % 2) / 2 - (d.i + d.i % 2) / 4) * triW
 		d.y = ((size - d.i) * triW) / 2 - Math.cos(d.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
 		d.dx = 0
 		d.dy = - Math.cos(d.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
+		if (d.i == 0 && d.j == 0) {
+			d.fixed = '#00FF00';
+			d.fixedC = 'g';
+			d.color = {r: 0, g: 0, b: 0}
+		} else if (d.i == 0 && d.j == (size - 1)) {
+			d.fixed = '#FF0000';
+			d.fixedC = 'r';
+			d.color = {r: 0, g: 0, b: 0}
+		} else if (d.j == 0 && d.i == (2 * size - 2)) {
+			d.fixed = '#0000FF';
+			d.fixedC = 'b';
+			d.color = {r: 0, g: 0, b: 0}
+		} else {
+			d.color = {
+				r: Math.floor(Math.random() * 16 * 16),
+				g: Math.floor(Math.random() * 16 * 16),
+				b: Math.floor(Math.random() * 16 * 16)
+			}
+		}
 	})
 
 	var tri = svg.selectAll('.base')
@@ -61,19 +85,19 @@ function init(wi, hi, size) {
 			.append("path")
 			.attr("class", function(d) { return "triangle color triangle-" + d.i + '-' + d.j })
 			.attr('stroke', 'red')
-			.attr('stroke-dasharray', function(d) { return (3 * wid / 5.55) })
+			.attr('stroke-dasharray', '12.2')
 			
 		svg.selectAll(".base")
 			.append("path")
 			.attr("class", function(d) { return "triangle color triangle-" + d.i + '-' + d.j })
-			.attr('stroke', 'green')
-			.attr('stroke-dasharray', function(d) { return (2 * wid / 5.55) + ',' + (wid / 5.55) })
+			.attr('stroke', function(d) { return d.c.g == 150 ? 'blue' : 'green' })
+			.attr('stroke-dasharray', '24.4,12.2')
 			
 		svg.selectAll(".base")
 			.append("path")
 			.attr("class", function(d) { return "triangle color triangle-" + d.i + '-' + d.j })
-			.attr('stroke', 'blue')
-			.attr('stroke-dasharray', function(d) { return (wid / 5.55) + ',' + (2 * wid / 5.55) })
+			.attr('stroke', function(d) { return d.c.b == 150 ? 'blue' : 'green' })
+			.attr('stroke-dasharray', '12.2,24.4')
 			
 		svg.selectAll(".base")
 			.append("path")
@@ -90,9 +114,61 @@ function init(wi, hi, size) {
 				d3.select(this).transition()
 			      .duration(750).attr('transform', 'translate(' + (e.x + e.dx) + ', ' + (e.y + e.dy) + ')rotate(' + e.r + ')scale(' + e.s + ')')
 			})
+			.on('contextmenu', function(e) {
+				if (!e.fixed) {
+					disperseColor(e)
+				}
+				d3.event.preventDefault();
+			})
 			
 		svg.selectAll('.triangle')
 			.attr("d", d3.svg.symbol().type('triangle-up'))
 		svg.selectAll('.none')
-			.style('fill', function(d) { return '#' + Math.floor(Math.random()*16777215).toString(16); })
+			.style('fill', function(d) { if (!d.fixed) { return d3.rgb(d.color.r, d.color.g, d.color.b) } else { console.log(d.fixed); return d.fixed } })
+
+		function disperseColor(d) {
+			colors.forEach(function(c) {
+				var adj = getAdjacent(d, c)
+				if (adj) {
+					adj.color[c] = adj.color[c] + d.color[c]
+					d.color[c] = 0
+					if (!adj.fixed) {
+						d3.selectAll('.triangle-' + adj.i + '-' + adj.j)
+							.transition().duration(750).style('fill', d3.rgb(adj.color.r, adj.color.g, adj.color.b));
+					}
+				}
+			})
+			d3.selectAll('.triangle-' + d.i + '-' + d.j)
+				.transition().duration(750).style('fill', d3.rgb(d.color.r, d.color.g, d.color.b));
+			refreshScores()
+		}
+
+		function getAdjacent(d, color) {
+			var delta;
+			if ((d.r + d.c[color]) % 360 == 150) {
+				delta = [1, 0]
+			} else if ((d.r + d.c[color]) % 360 == 90) {
+				delta = [1, 0]
+			} else if ((d.r + d.c[color]) % 360 == 30) {
+				delta = [1, -1]
+			} else if ((d.r + d.c[color]) % 360 == 330) {
+				delta = [-1, 0]
+			} else if ((d.r + d.c[color]) % 360 == 270) {
+				delta = [-1, 0]
+			} else if ((d.r + d.c[color]) % 360 == 210) {
+				delta = [-1, 1]
+			}
+			return $.grep(nodes, function(e) { return (e.i == (d.i + delta[0]) && e.j == (d.j + delta[1])) })[0]
+		}
+		
+		function refreshScores() {
+			moves++
+			var html = '<tr><td>' + moves + '</td>';
+			colors.forEach(function(c) {
+				var d = $.grep(nodes, function(e) { return e.fixedC = c })[0]
+				html += '<td>' + d.color[c] + '</td>';
+			})
+			html += '</tr>';
+			$('#scores > tbody > tr').eq(0).after(html)
+		}
 }
