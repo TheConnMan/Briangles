@@ -2,14 +2,14 @@
 <html>
     <head>
 		<link href="./css/briangles.css" type="text/css" rel="stylesheet" />
-		<link href="./css/avgrund.css" type="text/css" rel="stylesheet" />
+		<link href="./css/reveal.css" type="text/css" rel="stylesheet" />
         <title>Briangles</title>
     </head>
     <body>
         <script src="./js/jquery-2.1.0.min.js"></script>
         <script src="./js/d3.v3.min.js" charset="utf-8"></script>
         <script src="./js/briangles.js" charset="utf-8"></script>
-        <script src="./js/jquery.avgrund.min.js" charset="utf-8"></script>
+        <script src="./js/jquery.reveal.js" charset="utf-8"></script>
         <script>
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -85,18 +85,27 @@
 					</td>
 				</tr>
 			</table>
-	        <div style="width: 100%; text-align: right;"><button onclick="change(0)">Reset</button></div>
 	        <div id="game"></div>
 	        <div id='content'>
 		        <p>
-		        	<b>HOW TO PLAY:</b> Each triangle contains a random color. <b>Left click</b> to rotate the triangle and <b>right click</b> to separate the triangle's color. 
-		        	The color contained in each triangle is separated into red, green, and blue and each color is sent through their respective border.
+		        	<b>BACKGROUND:</b> Every color on your computer screen is made up of three components: red, green, and blue. Colors are created by lighting red, green, 
+		        	and blue at different intensities (e.g. purple is mostly red and blue). These primary colors appear at the corners of the game board.
 		        </p>
 		        <p>
-		        	<b>GOAL:</b> The goal is to move 80% of primary colors to their respective corners in the minimum number of color separations. Current percentages are displayed
-		        	as scores in the top right corner.
+		        	<b>GOAL:</b> The goal of the game is to split up the rest of the triangle colors into their primary components of red, green, and blue and move these 
+		        	primary colors into their corresponding corner in the minimum number of splits.
+		        </p>
+		        <p>
+		        	<b>HOW TO PLAY:</b> Each triangle starts filled with a random color and its three borders each represent a primary color. <b>Right click</b>
+		        	on a triangle to separate its fill color into red, green, and blue. Each primary color passes through its designated border and its intensity is added 
+		        	to the adjacent triangle. <b>Left click</b> to rotate a triangle, changing which adjacent triangles receive which colors.
 		        </p>
 	        </div>
+	        <div id="myModal" class="reveal-modal">
+			     <h1>You Won!</h1>
+			     <p id='winMessage'></p>
+			     <a class="close-reveal-modal">&#215;</a>
+			</div>
         </div>
         <script>
 			var boxes = ['moves', 'r', 'g', 'b']
@@ -104,15 +113,6 @@
 			var totals = {r: 0, g: 0, b: 0}
 			$(document).ready(function() {
 				init($('#game').width(), $('#game').width() * .8, parseInt($('#size').html()))
-				$('#game').avgrund({
-					width: 380,
-					height: 280,
-					setEvent: 'win',
-					showClose: true,
-					showCloseText: 'Close',
-					enableStackAnimation: false,
-					template: '<h1>You Won!</h1><p>You should play again.</p>'
-				})
 			})
 			function change(v) {
 				var cur = parseInt($('#size').html()) + v
@@ -123,11 +123,11 @@
 			
 			function reset(cur) {
 			 	$('#size').html(cur)
+			 	totals = {r: 0, g: 0, b: 0}
 			 	init($('#game').width(), $('#game').width() * .8, cur)
 			 	boxes.forEach(function(d) {
 			 		$('#' + d).html(0)
 			 	})
-			 	totals = {r: 0, g: 0, b: 0}
 				colors.forEach(function(c) {
 					$('#' + c).parent().parent().parent().css('background-color', '#999999')
 				})
