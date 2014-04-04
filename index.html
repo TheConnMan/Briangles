@@ -10,6 +10,7 @@
         <script src="./js/d3.v3.min.js" charset="utf-8"></script>
         <script src="./js/briangles.js" charset="utf-8"></script>
         <script src="./js/jquery.reveal.js" charset="utf-8"></script>
+        <script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
         <script>
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -85,7 +86,14 @@
 					</td>
 				</tr>
 			</table>
-	        <div style="width: 100%; text-align: right;"><button onclick="change(0)">Reset</button></div>
+			<table id='subheader'>
+				<tr>
+					<td><div style="width: 100%; text-align: right;"><button onclick="change(0)">Reset</button></div></td>
+					<td><a href="https://twitter.com/share" class="twitter-share-button" data-lang="en" data-text="Check out Briangles!" data-hashtags="Briangles" data-url="http://theconnman.github.io/Briangles">Tweet</a></td>
+				</tr>
+			</table>
+			
+	        
 	        <div id="game"></div>
 	        <div id='content'>
 		        <p>
@@ -117,6 +125,7 @@
 			var totals = {r: 0, g: 0, b: 0}
 			$(document).ready(function() {
 				init($('#game').width(), $('#game').width() * .8, parseInt($('#size').html()))
+				!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
 			})
 			
 			function change(v) {

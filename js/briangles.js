@@ -180,7 +180,11 @@ function init(w, h, size) {
 			}
 		})
 		if (counter == 3) {
-			$('#winMessage').html('You successfully completed difficulty ' + $('#size').html() + ' in ' + $('#moves').html() + ' moves.')
+			var html = '<p>You successfully completed difficulty ' + $('#size').html() + ' in ' + $('#moves').html() + ' moves!</p>';
+			/*var post = 'I beat Briangles level ' + $('#size').html() + ' in ' + $('#moves').html() + ' moves!';
+			html += '<a href="https://twitter.com/share" class="twitter-share-button" data-lang="en" data-text="' + post + '" data-hashtags="Briangles" count="none">Tweet</a>';*/
+			$('#winMessage').html(html);
+			//!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
 			$('#myModal').reveal({
 			     animation: 'fadeAndPop',                   //fade, fadeAndPop, none
 			     animationspeed: 300,                       //how fast animtions are

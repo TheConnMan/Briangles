@@ -50,6 +50,14 @@ p {
 	width: 20px;
 }
 
+#subheader {
+	float: right;
+}
+
+#widget {
+	width: 80px;
+}
+
 .color {
   fill: none;
   stroke-width: 1.6;
