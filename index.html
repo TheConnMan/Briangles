@@ -95,16 +95,20 @@
 	        </div>
         </div>
         <script>
-            $(document).ready(function() {
-            	init($('#game').width(), $('#game').width() * .8, parseInt($('#size').html()))
-            })
-            function change(v) {
-            	var cur = parseInt($('#size').html()) + v
-            	if (cur > 1) {
-	            	$('#size').html(cur)
-	            	init($('#game').width(), $('#game').width() * .8, cur)
-            	}
-            }
+			var boxes = ['moves', 'r', 'g', 'b']
+			$(document).ready(function() {
+				init($('#game').width(), $('#game').width() * .8, parseInt($('#size').html()))
+			})
+			function change(v) {
+				var cur = parseInt($('#size').html()) + v
+				if (cur > 1) {
+				 	$('#size').html(cur)
+				 	init($('#game').width(), $('#game').width() * .8, cur)
+				 	boxes.forEach(function(d) {
+				 		$('#' + d).html(0)
+				 	})
+				}
+			}
         </script>
     </body>
 </html>

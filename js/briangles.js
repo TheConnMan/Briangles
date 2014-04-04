@@ -130,7 +130,7 @@ function init(w, h, size) {
 		function disperseColor(d) {
 			colors.forEach(function(c) {
 				var adj = getAdjacent(d, c)
-				if (adj) {
+				if (adj && (!adj.fixedC || adj.fixedC == c)) {
 					adj.color[c] = adj.color[c] + d.color[c]
 					d.color[c] = 0
 					if (!adj.fixed) {
