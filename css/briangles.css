@@ -7,9 +7,23 @@ body {
 	font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif
 }
 
+button {
+	padding: 5px 10px 5px 10px;
+	background-color: #555555;
+	color: white;
+	font-weight: bold;
+	border: none;
+	border-radius: 5px;
+}
+
+button:hover {
+	cursor: pointer;
+}
+
 h1 {
 	color: #777777;
 	font-size: 2.5em;
+	margin-bottom: 10px;
 }
 
 p {

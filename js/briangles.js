@@ -11,8 +11,9 @@ function init(w, h, size) {
 			.attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
 	var nodes = [];
-	var colors = ['r', 'g', 'b'];
+	var background = {'r': '#FF0000', 'g': '#00BB00', 'b': '#0000FF'}
 	var moves = 0;
+	var score = {};
 
 	for (var i = 0; i < size; i++) {
 		nodes.push({
@@ -73,6 +74,9 @@ function init(w, h, size) {
 				g: Math.floor(Math.random() * 16 * 16),
 				b: Math.floor(Math.random() * 16 * 16)
 			}
+			totals.r += d.color.r
+			totals.g += d.color.g
+			totals.b += d.color.b
 		}
 	})
 
@@ -82,92 +86,101 @@ function init(w, h, size) {
 			.append('g')
 			.attr("class", 'base')
 			
-		svg.selectAll(".base")
-			.append("path")
-			.attr("class", function(d) { return "triangle color triangle-" + d.i + '-' + d.j })
-			.attr('stroke', function(d) { return d.fixed ? d.fixed : 'red' })
-			.attr('stroke-dasharray', '12.2')
-			
-		svg.selectAll(".base")
-			.append("path")
-			.attr("class", function(d) { return "triangle color triangle-" + d.i + '-' + d.j })
-			.attr('stroke', function(d) { return d.fixed ? d.fixed : (d.c.g == 150 ? 'blue' : 'green') })
-			.attr('stroke-dasharray', '24.4,12.2')
-			
-		svg.selectAll(".base")
-			.append("path")
-			.attr("class", function(d) { return "triangle color triangle-" + d.i + '-' + d.j })
-			.attr('stroke', function(d) { return d.fixed ? d.fixed : (d.c.b == 150 ? 'blue' : 'green') })
-			.attr('stroke-dasharray', '12.2,24.4')
-			
-		svg.selectAll(".base")
-			.append("path")
-			.attr("class", function(d) { return "triangle none triangle-" + d.i + '-' + d.j })
-			.attr('stroke', 'white')
-			.attr('stroke-width', .5)
-			
-		svg.selectAll('.base')
-			.attr("transform", function(d) { return "translate(" + (d.x + d.dx) + "," + (d.y + d.dy) + ")rotate(" + d.r + ")scale(" + d.s + ")"; })
-			.on('click', function(e) {
-				e.r += 120
-				e.dx = Math.sin(e.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
-				e.dy = - Math.cos(e.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
-				d3.select(this).transition()
-			      .duration(750).attr('transform', 'translate(' + (e.x + e.dx) + ', ' + (e.y + e.dy) + ')rotate(' + e.r + ')scale(' + e.s + ')')
-			})
-			.on('contextmenu', function(e) {
-				if (!e.fixed && !(e.color.r == 0 && e.color.g == 0 && e.color.b == 0)) {
-					disperseColor(e)
-				}
-				d3.event.preventDefault();
-			})
-			
-		svg.selectAll('.triangle')
-			.attr("d", d3.svg.symbol().type('triangle-up'))
-		svg.selectAll('.none')
-			.style('fill', function(d) { if (!d.fixed) { return d3.rgb(d.color.r, d.color.g, d.color.b) } else { return d.fixed } })
-
-		function disperseColor(d) {
-			colors.forEach(function(c) {
-				var adj = getAdjacent(d, c)
-				if (adj && (!adj.fixedC || adj.fixedC == c)) {
-					adj.color[c] = adj.color[c] + d.color[c]
-					d.color[c] = 0
-					if (!adj.fixed) {
-						d3.selectAll('.triangle-' + adj.i + '-' + adj.j)
-							.transition().duration(750).style('fill', d3.rgb(adj.color.r, adj.color.g, adj.color.b));
-					}
-				}
-			})
-			d3.selectAll('.triangle-' + d.i + '-' + d.j)
-				.transition().duration(750).style('fill', d3.rgb(d.color.r, d.color.g, d.color.b));
-			refreshScores()
-		}
-
-		function getAdjacent(d, color) {
-			var delta;
-			if ((d.r + d.c[color]) % 360 == 150) {
-				delta = [1, 0]
-			} else if ((d.r + d.c[color]) % 360 == 90) {
-				delta = [1, 0]
-			} else if ((d.r + d.c[color]) % 360 == 30) {
-				delta = [1, -1]
-			} else if ((d.r + d.c[color]) % 360 == 330) {
-				delta = [-1, 0]
-			} else if ((d.r + d.c[color]) % 360 == 270) {
-				delta = [-1, 0]
-			} else if ((d.r + d.c[color]) % 360 == 210) {
-				delta = [-1, 1]
-			}
-			return $.grep(nodes, function(e) { return (e.i == (d.i + delta[0]) && e.j == (d.j + delta[1])) })[0]
-		}
+	svg.selectAll(".base")
+		.append("path")
+		.attr("class", function(d) { return "triangle color triangle-" + d.i + '-' + d.j })
+		.attr('stroke', function(d) { return d.fixed ? d.fixed : 'red' })
+		.attr('stroke-dasharray', '12.2')
 		
-		function refreshScores() {
-			moves++
-			$('#moves').html(moves)
-			colors.forEach(function(c) {
-				var d = $.grep(nodes, function(e) { return e.fixedC == c })[0]
-				$('#' + c).html(d.color[c])
-			})
+	svg.selectAll(".base")
+		.append("path")
+		.attr("class", function(d) { return "triangle color triangle-" + d.i + '-' + d.j })
+		.attr('stroke', function(d) { return d.fixed ? d.fixed : (d.c.g == 150 ? 'blue' : 'green') })
+		.attr('stroke-dasharray', '24.4,12.2')
+		
+	svg.selectAll(".base")
+		.append("path")
+		.attr("class", function(d) { return "triangle color triangle-" + d.i + '-' + d.j })
+		.attr('stroke', function(d) { return d.fixed ? d.fixed : (d.c.b == 150 ? 'blue' : 'green') })
+		.attr('stroke-dasharray', '12.2,24.4')
+		
+	svg.selectAll(".base")
+		.append("path")
+		.attr("class", function(d) { return "triangle none triangle-" + d.i + '-' + d.j })
+		.attr('stroke', 'white')
+		.attr('stroke-width', .5)
+		
+	svg.selectAll('.base')
+		.attr("transform", function(d) { return "translate(" + (d.x + d.dx) + "," + (d.y + d.dy) + ")rotate(" + d.r + ")scale(" + d.s + ")"; })
+		.on('click', function(e) {
+			e.r += 120
+			e.dx = Math.sin(e.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
+			e.dy = - Math.cos(e.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
+			d3.select(this).transition()
+		      .duration(750).attr('transform', 'translate(' + (e.x + e.dx) + ', ' + (e.y + e.dy) + ')rotate(' + e.r + ')scale(' + e.s + ')')
+		})
+		.on('contextmenu', function(e) {
+			if (!e.fixed && !(e.color.r == 0 && e.color.g == 0 && e.color.b == 0)) {
+				disperseColor(e)
+			}
+			d3.event.preventDefault();
+		})
+		
+	svg.selectAll('.triangle')
+		.attr("d", d3.svg.symbol().type('triangle-up'))
+	svg.selectAll('.none')
+		.style('fill', function(d) { if (!d.fixed) { return d3.rgb(d.color.r, d.color.g, d.color.b) } else { return d.fixed } })
+
+	function disperseColor(d) {
+		colors.forEach(function(c) {
+			var adj = getAdjacent(d, c)
+			if (adj && (!adj.fixedC || adj.fixedC == c)) {
+				adj.color[c] = adj.color[c] + d.color[c]
+				d.color[c] = 0
+				if (!adj.fixed) {
+					d3.selectAll('.triangle-' + adj.i + '-' + adj.j)
+						.transition().duration(750).style('fill', d3.rgb(adj.color.r, adj.color.g, adj.color.b));
+				}
+			}
+		})
+		d3.selectAll('.triangle-' + d.i + '-' + d.j)
+			.transition().duration(750).style('fill', d3.rgb(d.color.r, d.color.g, d.color.b));
+		refreshScores()
+	}
+
+	function getAdjacent(d, color) {
+		var delta;
+		if ((d.r + d.c[color]) % 360 == 150) {
+			delta = [1, 0]
+		} else if ((d.r + d.c[color]) % 360 == 90) {
+			delta = [1, 0]
+		} else if ((d.r + d.c[color]) % 360 == 30) {
+			delta = [1, -1]
+		} else if ((d.r + d.c[color]) % 360 == 330) {
+			delta = [-1, 0]
+		} else if ((d.r + d.c[color]) % 360 == 270) {
+			delta = [-1, 0]
+		} else if ((d.r + d.c[color]) % 360 == 210) {
+			delta = [-1, 1]
 		}
+		return $.grep(nodes, function(e) { return (e.i == (d.i + delta[0]) && e.j == (d.j + delta[1])) })[0]
+	}
+	
+	function refreshScores() {
+		moves++
+		$('#moves').html(moves)
+		var counter = 0
+		colors.forEach(function(c) {
+			var d = $.grep(nodes, function(e) { return e.fixedC == c })[0]
+			score[c] = Math.floor(100 * d.color[c] / totals[c])
+			$('#' + c).html(score[c])
+			if (score[c] > 80) {
+				counter++
+				$('#' + c).parent().parent().parent().css('background-color', background[c])
+			}
+		})
+		if (counter == 3) {
+			$('#game').trigger('win')
+		}
+	}
 }

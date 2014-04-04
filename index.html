@@ -2,12 +2,14 @@
 <html>
     <head>
 		<link href="./css/briangles.css" type="text/css" rel="stylesheet" />
+		<link href="./css/avgrund.css" type="text/css" rel="stylesheet" />
         <title>Briangles</title>
     </head>
     <body>
         <script src="./js/jquery-2.1.0.min.js"></script>
         <script src="./js/d3.v3.min.js" charset="utf-8"></script>
         <script src="./js/briangles.js" charset="utf-8"></script>
+        <script src="./js/jquery.avgrund.min.js" charset="utf-8"></script>
         <script>
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -27,7 +29,7 @@
 								<td class='label' colspan="2">Difficulty</td>
 							</tr>
 							<tr style='text-align: center;'>
-								<td id='size' class='value' style='width: 35px; text-align: right;'>5</td>
+								<td id='size' class='value' style='width: 35px; text-align: right;'>4</td>
 								<td>
 									<table>
 										<tr>
@@ -83,6 +85,7 @@
 					</td>
 				</tr>
 			</table>
+	        <div style="width: 100%; text-align: right;"><button onclick="change(0)">Reset</button></div>
 	        <div id="game"></div>
 	        <div id='content'>
 		        <p>
@@ -90,24 +93,44 @@
 		        	The color contained in each triangle is separated into red, green, and blue and each color is sent through their respective border.
 		        </p>
 		        <p>
-		        	<b>GOAL:</b> The goal is to move all primary colors to their respective corners in the minimum number of color separations.
+		        	<b>GOAL:</b> The goal is to move 80% of primary colors to their respective corners in the minimum number of color separations. Current percentages are displayed
+		        	as scores in the top right corner.
 		        </p>
 	        </div>
         </div>
         <script>
 			var boxes = ['moves', 'r', 'g', 'b']
+			var colors = ['r', 'g', 'b']
+			var totals = {r: 0, g: 0, b: 0}
 			$(document).ready(function() {
 				init($('#game').width(), $('#game').width() * .8, parseInt($('#size').html()))
+				$('#game').avgrund({
+					width: 380,
+					height: 280,
+					setEvent: 'win',
+					showClose: true,
+					showCloseText: 'Close',
+					enableStackAnimation: false,
+					template: '<h1>You Won!</h1><p>You should play again.</p>'
+				})
 			})
 			function change(v) {
 				var cur = parseInt($('#size').html()) + v
 				if (cur > 1) {
-				 	$('#size').html(cur)
-				 	init($('#game').width(), $('#game').width() * .8, cur)
-				 	boxes.forEach(function(d) {
-				 		$('#' + d).html(0)
-				 	})
+				 	reset(cur)
 				}
+			}
+			
+			function reset(cur) {
+			 	$('#size').html(cur)
+			 	init($('#game').width(), $('#game').width() * .8, cur)
+			 	boxes.forEach(function(d) {
+			 		$('#' + d).html(0)
+			 	})
+			 	totals = {r: 0, g: 0, b: 0}
+				colors.forEach(function(c) {
+					$('#' + c).parent().parent().parent().css('background-color', '#999999')
+				})
 			}
         </script>
     </body>
