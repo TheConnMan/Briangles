@@ -17,25 +17,66 @@
 			ga('create', 'UA-48858955-1', 'theconnman.github.io');
 			ga('send', 'pageview');
 		</script>
-        <h1>Briangles</h1>
-        <div id="game"></div>
-        <table id ='scores'>
-        	<tr>
-        		<td>Moves</td>
-        		<td>Red</td>
-        		<td>Green</td>
-        		<td>Blue</td>
-        	</tr>
-        	<tr>
-        		<td>0</td>
-        		<td>0</td>
-        		<td>0</td>
-        		<td>0</td>
-        	</tr>
-        </table>
+		<div>
+			<table id='header'>
+				<tr>
+					<td><h1>Briangles</h1></td>
+					<td style='float: right;'>
+						<table class='score'>
+							<tr>
+								<td class='label'>Moves</td>
+							</tr>
+							<tr>
+								<td id='moves' class='value'>0</td>
+							</tr>
+						</table>
+					</td>
+					<td style='float: right;'>
+						<table class='score'>
+							<tr>
+								<td class='label'>Red</td>
+							</tr>
+							<tr>
+								<td id='r' class='value'>0</td>
+							</tr>
+						</table>
+					</td>
+					<td style='float: right;'>
+						<table class='score'>
+							<tr>
+								<td class='label'>Green</td>
+							</tr>
+							<tr>
+								<td id='g' class='value'>0</td>
+							</tr>
+						</table>
+					</td>
+					<td style='float: right;'>
+						<table class='score'>
+							<tr>
+								<td class='label'>Blue</td>
+							</tr>
+							<tr>
+								<td id='b' class='value'>0</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+	        <div id="game"></div>
+	        <div id='content'>
+		        <p>
+		        	<b>HOW TO PLAY:</b> Each triangle contains a random color. <b>Left click</b> to rotate the triangle and <b>right click</b> to separate the triangle's color. 
+		        	The color contained in each triangle is separated into red, green, and blue and each color is sent through their respective border.
+		        </p>
+		        <p>
+		        	<b>GOAL:</b> The goal is to move all primary colors to their respective corners in the minimum number of color separations.
+		        </p>
+	        </div>
+        </div>
         <script>
             $(document).ready(function() {
-            	init(600, 600, 4)
+            	init($('#game').width(), $('#game').width() * .8, 5)
             })
         </script>
     </body>

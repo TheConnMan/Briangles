@@ -1,4 +1,51 @@
+body {
+	text-align: center;
+	background-color: #DDDDDD;
+	width: 700px;
+	margin: 0 auto;
+	margin-top: 100px;
+	font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif
+}
+
+h1 {
+	color: #777777;
+	font-size: 2.5em;
+}
+
+p {
+	color: #555555;
+}
+
+#content {
+	text-align: left;
+}
+
+#header {
+	width: 100%;
+	margin: 0 auto;
+}
+
 .color {
   fill: none;
   stroke-width: 1.6;
+}
+
+.score {
+	background-color: #999999;
+	height: 50px;
+	width: 80px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-radius: 10px;
+}
+
+.label {
+	color: #EEEEEE;
+	font-weight: bold;
+}
+
+.value {
+	color: white;
+	font-weight: bold;
+	font-size: 1.5em;
 }

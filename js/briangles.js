@@ -1,12 +1,11 @@
-function init(wi, hi, size) {
-	var m = [ 180, 40, 50, 120 ],
-		w = wi - m[1] - m[3], h = hi - m[0] - m[2];
+function init(w, h, size) {
+	var m = [ 250, 100, 40, 150 ];
 
-	var triW = w / size;
+	var triW = (w - 200) / size;
 	var wid = triW * 46 / 75;
 
 	var svg = d3.select("#game").append("svg:svg").attr("width",
-			w + m[1] + m[3]).attr("height", h + m[0] + m[2]).append("svg:g")
+			w).attr("height", h).append("svg:g")
 			.attr("transform", "translate(" + m[3] + "," + m[0] + ")");
 
 	var nodes = [];
@@ -84,19 +83,19 @@ function init(wi, hi, size) {
 		svg.selectAll(".base")
 			.append("path")
 			.attr("class", function(d) { return "triangle color triangle-" + d.i + '-' + d.j })
-			.attr('stroke', 'red')
+			.attr('stroke', function(d) { return d.fixed ? d.fixed : 'red' })
 			.attr('stroke-dasharray', '12.2')
 			
 		svg.selectAll(".base")
 			.append("path")
 			.attr("class", function(d) { return "triangle color triangle-" + d.i + '-' + d.j })
-			.attr('stroke', function(d) { return d.c.g == 150 ? 'blue' : 'green' })
+			.attr('stroke', function(d) { return d.fixed ? d.fixed : (d.c.g == 150 ? 'blue' : 'green') })
 			.attr('stroke-dasharray', '24.4,12.2')
 			
 		svg.selectAll(".base")
 			.append("path")
 			.attr("class", function(d) { return "triangle color triangle-" + d.i + '-' + d.j })
-			.attr('stroke', function(d) { return d.c.b == 150 ? 'blue' : 'green' })
+			.attr('stroke', function(d) { return d.fixed ? d.fixed : (d.c.b == 150 ? 'blue' : 'green') })
 			.attr('stroke-dasharray', '12.2,24.4')
 			
 		svg.selectAll(".base")
@@ -115,7 +114,7 @@ function init(wi, hi, size) {
 			      .duration(750).attr('transform', 'translate(' + (e.x + e.dx) + ', ' + (e.y + e.dy) + ')rotate(' + e.r + ')scale(' + e.s + ')')
 			})
 			.on('contextmenu', function(e) {
-				if (!e.fixed) {
+				if (!e.fixed && !(e.color.r == 0 && e.color.g == 0 && e.color.b == 0)) {
 					disperseColor(e)
 				}
 				d3.event.preventDefault();
@@ -163,12 +162,10 @@ function init(wi, hi, size) {
 		
 		function refreshScores() {
 			moves++
-			var html = '<tr><td>' + moves + '</td>';
+			$('#moves').html(moves)
 			colors.forEach(function(c) {
 				var d = $.grep(nodes, function(e) { return e.fixedC == c })[0]
-				html += '<td>' + d.color[c] + '</td>';
+				$('#' + c).html(d.color[c])
 			})
-			html += '</tr>';
-			$('#scores > tbody > tr').eq(0).after(html)
 		}
 }
