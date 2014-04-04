@@ -85,6 +85,7 @@
 					</td>
 				</tr>
 			</table>
+	        <div style="width: 100%; text-align: right;"><button onclick="change(0)">Reset</button></div>
 	        <div id="game"></div>
 	        <div id='content'>
 		        <p>
@@ -107,7 +108,7 @@
 			     <a class="close-reveal-modal">&#215;</a>
 			</div>
 			<div id="footer">
-				
+				Created by Brian Conn. Contact me at <a href="mailto:brian@theconnman.com">brian@theconnman.com</a>.
 			</div>
         </div>
         <script>
@@ -117,6 +118,7 @@
 			$(document).ready(function() {
 				init($('#game').width(), $('#game').width() * .8, parseInt($('#size').html()))
 			})
+			
 			function change(v) {
 				var cur = parseInt($('#size').html()) + v
 				if (cur > 1) {
