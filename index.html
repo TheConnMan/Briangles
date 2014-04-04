@@ -24,6 +24,26 @@
 					<td style='float: right;'>
 						<table class='score'>
 							<tr>
+								<td class='label' colspan="2">Difficulty</td>
+							</tr>
+							<tr style='text-align: center;'>
+								<td id='size' class='value' style='width: 35px; text-align: right;'>5</td>
+								<td>
+									<table>
+										<tr>
+											<td><div class='button triangle-up' onclick="change(1)"></div></td>
+										</tr>
+										<tr>
+											<td><div class='button triangle-down' onclick="change(-1)"></div></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+					<td style='float: right;'>
+						<table class='score'>
+							<tr>
 								<td class='label'>Moves</td>
 							</tr>
 							<tr>
@@ -76,8 +96,15 @@
         </div>
         <script>
             $(document).ready(function() {
-            	init($('#game').width(), $('#game').width() * .8, 5)
+            	init($('#game').width(), $('#game').width() * .8, parseInt($('#size').html()))
             })
+            function change(v) {
+            	var cur = parseInt($('#size').html()) + v
+            	if (cur > 1) {
+	            	$('#size').html(cur)
+	            	init($('#game').width(), $('#game').width() * .8, cur)
+            	}
+            }
         </script>
     </body>
 </html>

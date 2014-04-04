@@ -3,6 +3,8 @@ function init(w, h, size) {
 
 	var triW = (w - 200) / size;
 	var wid = triW * 46 / 75;
+	
+	d3.select("#game").html('')
 
 	var svg = d3.select("#game").append("svg:svg").attr("width",
 			w).attr("height", h).append("svg:g")

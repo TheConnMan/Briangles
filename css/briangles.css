@@ -25,6 +25,10 @@ p {
 	margin: 0 auto;
 }
 
+#size {
+	width: 20px;
+}
+
 .color {
   fill: none;
   stroke-width: 1.6;
@@ -42,6 +46,28 @@ p {
 .label {
 	color: #EEEEEE;
 	font-weight: bold;
+}
+
+.button {
+	cursor: pointer;
+}
+
+.triangle-up {
+	width: 0;
+	height: 0;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	
+	border-bottom: 10px solid black;
+}
+
+.triangle-down {
+	width: 0;
+	height: 0;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	
+	border-top: 10px solid black;
 }
 
 .value {
