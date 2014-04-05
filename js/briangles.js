@@ -14,6 +14,8 @@ function init(w, h, size) {
 	var background = {'r': '#FF0000', 'g': '#00BB00', 'b': '#0000FF'}
 	var moves = 0;
 	var score = {};
+	var timer
+	var longpress = false
 
 	for (var i = 0; i < size; i++) {
 		nodes.push({
@@ -112,18 +114,28 @@ function init(w, h, size) {
 		
 	svg.selectAll('.base')
 		.attr("transform", function(d) { return "translate(" + (d.x + d.dx) + "," + (d.y + d.dy) + ")rotate(" + d.r + ")scale(" + d.s + ")"; })
-		.on('click', function(e) {
-			e.r += 120
-			e.dx = Math.sin(e.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
-			e.dy = - Math.cos(e.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
-			d3.select(this).transition()
-		      .duration(750).attr('transform', 'translate(' + (e.x + e.dx) + ', ' + (e.y + e.dy) + ')rotate(' + e.r + ')scale(' + e.s + ')')
-		})
 		.on('contextmenu', function(e) {
-			if (!e.fixed && !(e.color.r == 0 && e.color.g == 0 && e.color.b == 0)) {
-				disperseColor(e)
-			}
 			d3.event.preventDefault();
+		})
+		.on('mousedown', function(e) {
+			timer = window.setTimeout(function() {
+				if (!e.fixed && !(e.color.r == 0 && e.color.g == 0 && e.color.b == 0)) {
+					disperseColor(e)
+				}
+				longpress = true
+				return false
+			}, 400)
+		})
+		.on('mouseup', function(e) {
+			clearTimeout(timer)
+			if (!longpress && !e.fixed) {
+				e.r += 120
+				e.dx = Math.sin(e.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
+				e.dy = - Math.cos(e.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
+				d3.select(this).transition()
+			      .duration(750).attr('transform', 'translate(' + (e.x + e.dx) + ', ' + (e.y + e.dy) + ')rotate(' + e.r + ')scale(' + e.s + ')')
+			}
+			longpress = false
 		})
 		
 	svg.selectAll('.triangle')

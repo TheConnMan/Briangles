@@ -81,6 +81,10 @@ p {
 	cursor: pointer;
 }
 
+.triangle:hover {
+	cursor: pointer;
+}
+
 .triangle-up {
 	width: 0;
 	height: 0;
