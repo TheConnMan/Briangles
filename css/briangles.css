@@ -4,7 +4,9 @@ body {
 	width: 700px;
 	margin: 0 auto;
 	margin-top: 70px;
-	font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif
+	font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
 }
 
 button {
@@ -83,6 +85,8 @@ p {
 
 .triangle:hover {
 	cursor: pointer;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
 }
 
 .triangle-up {

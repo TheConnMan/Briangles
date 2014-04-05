@@ -14,8 +14,6 @@ function init(w, h, size) {
 	var background = {'r': '#FF0000', 'g': '#00BB00', 'b': '#0000FF'}
 	var moves = 0;
 	var score = {};
-	var timer
-	var longpress = false
 
 	for (var i = 0; i < size; i++) {
 		nodes.push({
@@ -112,31 +110,28 @@ function init(w, h, size) {
 		.attr('stroke', 'white')
 		.attr('stroke-width', .5)
 		
+	$('.base').nodoubletapzoom()
+	
 	svg.selectAll('.base')
 		.attr("transform", function(d) { return "translate(" + (d.x + d.dx) + "," + (d.y + d.dy) + ")rotate(" + d.r + ")scale(" + d.s + ")"; })
-		.on('contextmenu', function(e) {
-			d3.event.preventDefault();
-		})
-		.on('mousedown', function(e) {
-			timer = window.setTimeout(function() {
-				if (!e.fixed && !(e.color.r == 0 && e.color.g == 0 && e.color.b == 0)) {
-					disperseColor(e)
-				}
-				longpress = true
-				return false
-			}, 400)
-		})
-		.on('mouseup', function(e) {
-			clearTimeout(timer)
-			if (!longpress && !e.fixed) {
+		.on('click', function(e) {
+			if (!e.fixed) {
 				e.r += 120
 				e.dx = Math.sin(e.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
 				e.dy = - Math.cos(e.r / 180 * Math.PI) / Math.sqrt(3) / 4 * wid
 				d3.select(this).transition()
 			      .duration(750).attr('transform', 'translate(' + (e.x + e.dx) + ', ' + (e.y + e.dy) + ')rotate(' + e.r + ')scale(' + e.s + ')')
 			}
-			longpress = false
 		})
+		.on('contextmenu', function(e) {
+			disperseColor(e)
+			d3.event.preventDefault();
+		})
+		
+	$('.base').on('dbltap', function() {
+		var e = d3.select(this)[0][0]['__data__']
+		disperseColor(e)
+	})
 		
 	svg.selectAll('.triangle')
 		.attr("d", d3.svg.symbol().type('triangle-up'))
@@ -144,20 +139,22 @@ function init(w, h, size) {
 		.style('fill', function(d) { if (!d.fixed) { return d3.rgb(d.color.r, d.color.g, d.color.b) } else { return d.fixed } })
 
 	function disperseColor(d) {
-		colors.forEach(function(c) {
-			var adj = getAdjacent(d, c)
-			if (adj && (!adj.fixedC || adj.fixedC == c)) {
-				adj.color[c] = adj.color[c] + d.color[c]
-				d.color[c] = 0
-				if (!adj.fixed) {
-					d3.selectAll('.triangle-' + adj.i + '-' + adj.j)
-						.transition().duration(750).style('fill', d3.rgb(adj.color.r, adj.color.g, adj.color.b));
+		if (!d.fixed && !(d.color.r == 0 && d.color.g == 0 && d.color.b == 0)) {
+			colors.forEach(function(c) {
+				var adj = getAdjacent(d, c)
+				if (adj && (!adj.fixedC || adj.fixedC == c)) {
+					adj.color[c] = adj.color[c] + d.color[c]
+					d.color[c] = 0
+					if (!adj.fixed) {
+						d3.selectAll('.triangle-' + adj.i + '-' + adj.j)
+							.transition().duration(750).style('fill', d3.rgb(adj.color.r, adj.color.g, adj.color.b));
+					}
 				}
-			}
-		})
-		d3.selectAll('.triangle-' + d.i + '-' + d.j)
-			.transition().duration(750).style('fill', d3.rgb(d.color.r, d.color.g, d.color.b));
-		refreshScores()
+			})
+			d3.selectAll('.triangle-' + d.i + '-' + d.j)
+				.transition().duration(750).style('fill', d3.rgb(d.color.r, d.color.g, d.color.b));
+			refreshScores()
+		}
 	}
 
 	function getAdjacent(d, color) {
@@ -206,3 +203,19 @@ function init(w, h, size) {
 		}
 	}
 }
+
+(function($) {
+  $.fn.nodoubletapzoom = function() {
+      $(this).bind('touchstart', function preventZoom(e) {
+        var t2 = e.timeStamp
+          , t1 = $(this).data('lastTouch') || t2
+          , dt = t2 - t1
+          , fingers = e.originalEvent.touches.length;
+        $(this).data('lastTouch', t2);
+        if (!dt || dt > 500 || fingers > 1) return;
+
+        e.preventDefault();
+        $(this).trigger('dbltap');
+      });
+  };
+})(jQuery);
