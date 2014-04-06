@@ -194,6 +194,13 @@ function init(w, h, size) {
 			html += '<a href="https://twitter.com/share" class="twitter-share-button" data-lang="en" data-text="' + post + '" data-hashtags="Briangles" count="none">Tweet</a>';*/
 			$('#winMessage').html(html);
 			//!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+			var obj = JSON.parse(window.localStorage['bestScores'])
+			var loc = obj[$('#size').html()]
+			if ((loc && loc > parseInt($('#moves').html())) || !loc) {
+				obj[$('#size').html()] = $('#moves').html()
+				window.localStorage['bestScores'] = JSON.stringify(obj)
+				$('#best').html($('#moves').html())
+			}
 			$('#myModal').reveal({
 			     animation: 'fadeAndPop',                   //fade, fadeAndPop, none
 			     animationspeed: 300,                       //how fast animtions are

@@ -58,6 +58,16 @@
 					<td style='float: right;'>
 						<table class='score'>
 							<tr>
+								<td class='label'>Best</td>
+							</tr>
+							<tr>
+								<td id='best' class='value'>&nbsp;</td>
+							</tr>
+						</table>
+					</td>
+					<td style='float: right;'>
+						<table class='score'>
+							<tr>
 								<td class='label'>Red</td>
 							</tr>
 							<tr>
@@ -127,8 +137,12 @@
 			var boxes = ['moves', 'r', 'g', 'b']
 			var colors = ['r', 'g', 'b']
 			var totals = {r: 0, g: 0, b: 0}
+			var best = {}
 			$(document).ready(function() {
 				init($('#game').width(), $('#game').width() * .8, parseInt($('#size').html()))
+				if (!window.localStorage['bestScores']) {
+					window.localStorage['bestScores'] = JSON.stringify({})
+				}
 				!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
 			})
 			
@@ -149,6 +163,11 @@
 				colors.forEach(function(c) {
 					$('#' + c).parent().parent().parent().css('background-color', '#999999')
 				})
+				if (JSON.parse(window.localStorage['bestScores'])[cur.toString()]) {
+					$('#best').html(JSON.parse(window.localStorage['bestScores'])[cur.toString()])
+				} else {
+					$('#best').html('&nbsp;')
+				}
 			}
         </script>
     </body>
