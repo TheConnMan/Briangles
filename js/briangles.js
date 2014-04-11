@@ -140,10 +140,14 @@ function init(w, h, size) {
 
 	function disperseColor(d) {
 		if (!d.fixed && !(d.color.r == 0 && d.color.g == 0 && d.color.b == 0)) {
+			var changed = false
 			colors.forEach(function(c) {
 				var adj = getAdjacent(d, c)
 				if (adj && (!adj.fixedC || adj.fixedC == c)) {
 					adj.color[c] = adj.color[c] + d.color[c]
+					if (d.color[c] > 0) {
+						changed = true
+					}
 					d.color[c] = 0
 					if (!adj.fixed) {
 						d3.selectAll('.triangle-' + adj.i + '-' + adj.j)
@@ -153,7 +157,9 @@ function init(w, h, size) {
 			})
 			d3.selectAll('.triangle-' + d.i + '-' + d.j)
 				.transition().duration(750).style('fill', d3.rgb(d.color.r, d.color.g, d.color.b));
-			refreshScores()
+			if (changed) {
+				refreshScores()
+			}
 		}
 	}
 
@@ -202,10 +208,10 @@ function init(w, h, size) {
 				$('#best').html($('#moves').html())
 			}
 			$('#myModal').reveal({
-			     animation: 'fadeAndPop',                   //fade, fadeAndPop, none
-			     animationspeed: 300,                       //how fast animtions are
-			     closeonbackgroundclick: true,              //if you click background will modal close?
-			     dismissmodalclass: 'close-reveal-modal'    //the class of a button or element that will close an open modal
+			     animation: 'fadeAndPop',
+			     animationspeed: 300,
+			     closeonbackgroundclick: true,
+			     dismissmodalclass: 'close-reveal-modal'
 			});
 		}
 	}
